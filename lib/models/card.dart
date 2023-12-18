@@ -1,3 +1,4 @@
+import 'package:creditcard/models/banned_countries.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -63,9 +64,7 @@ Card currentCard = Card(
 
 List<Card> search(String pattern) {
   return cards
-      .where((c) => (c.FullName == pattern ||
-          c.CardNumber == pattern ||
-          c.CVV == pattern))
+      .where((c) => (c.FullName == pattern || c.CardNumber == pattern))
       .toList();
 }
 
@@ -75,10 +74,16 @@ void save(BuildContext context) {
     return;
   }
 
-  List<Card> matchingCards = search(currentCard.CardNumber);
+  List<Card> matchingCards =
+      cards.where((c) => (c.CardNumber == currentCard.CardNumber)).toList();
 
   if (matchingCards.isNotEmpty) {
     dialogbox(context, 'Card', 'Card Already Exists');
+    return;
+  }
+
+  if (bannedCountries.contains(currentCard.IssuingCountry)) {
+    dialogbox(context, 'Card', 'Specified country is banned');
     return;
   }
 
