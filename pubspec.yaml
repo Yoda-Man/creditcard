@@ -41,6 +41,8 @@ dependencies:
   country_picker: ^2.0.23
   flutter_credit_card: ^4.0.1
   another_flushbar: ^1.12.30
+  credit_card_scanner: ^1.0.5
+  custom_bottom_sheet: ^1.1.2
 
 dev_dependencies:
   flutter_test:

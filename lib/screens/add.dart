@@ -1,4 +1,5 @@
 import 'package:country_picker/country_picker.dart';
+import 'package:credit_card_scanner/credit_card_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/card.dart';
@@ -8,6 +9,7 @@ import '../utils/cardutils.dart';
 import '../utils/enum.dart';
 import '../widgets/bottomnavigationbar.dart';
 import '../widgets/search_box.dart';
+import '../widgets/show_card.dart';
 
 class AddNewCardScreen extends StatefulWidget {
   const AddNewCardScreen({Key? key}) : super(key: key);
@@ -18,6 +20,8 @@ class AddNewCardScreen extends StatefulWidget {
 
 class _AddNewCardScreenState extends State<AddNewCardScreen> {
   TextEditingController cardNumberController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController expieryDateController = TextEditingController();
   TextEditingController countryOfIssueController = TextEditingController();
 
   CardType cardType = CardType.Invalid;
@@ -56,6 +60,29 @@ class _AddNewCardScreenState extends State<AddNewCardScreen> {
       selectedIndex = index;
       onItemTapped(context);
     });
+  }
+
+  ListView displaySession() {
+    return ListView.builder(
+        itemCount: session.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(
+                '${session[index].FullName} : ${session[index].CardType}',
+                style: const TextStyle(color: Colors.indigo)),
+            subtitle: Text(
+                '${session[index].CardNumber} : ${session[index].IssuingCountry}',
+                style: const TextStyle(color: Colors.indigo)),
+            leading: const Icon(
+              Icons.credit_card,
+              color: Colors.indigo,
+            ),
+            onTap: () {
+              currentCard = session[index];
+              showCard(context);
+            },
+          );
+        });
   }
 
   @override
@@ -126,9 +153,35 @@ class _AddNewCardScreenState extends State<AddNewCardScreen> {
     );
     return Scaffold(
       appBar: AppBar(
-          iconTheme: const IconThemeData(color: Color(0xFF100887)),
-          title: const SearchField(),
-          backgroundColor: Colors.white),
+        iconTheme: const IconThemeData(color: Color(0xFF100887)),
+        title: const SearchField(),
+        backgroundColor: Colors.white,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.camera,
+              color: Color(0xFF100887),
+            ),
+            onPressed: () async {
+              var cardDetails = await CardScanner.scanCard(
+                scanOptions: const CardScanOptions(
+                  scanCardHolderName: true,
+                ),
+              );
+
+              setState(() {
+                currentCard.FullName = cardDetails!.cardHolderName;
+                currentCard.CardNumber = cardDetails!.cardNumber;
+                currentCard.ExpieryDate = cardDetails!.expiryDate;
+
+                fullNameController.text = currentCard.FullName;
+                cardNumberController.text = currentCard.CardNumber;
+                expieryDateController.text = currentCard.ExpieryDate;
+              });
+            },
+          ),
+        ],
+      ),
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex:
@@ -141,6 +194,7 @@ class _AddNewCardScreenState extends State<AddNewCardScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           save(context);
+          setState(() {});
         },
         label: const Text(
           'Add card',
@@ -173,6 +227,35 @@ class _AddNewCardScreenState extends State<AddNewCardScreen> {
                     ],
                   ),
                   countryOfIssue,
+                  ListTile(
+                    contentPadding: const EdgeInsets.only(
+                      left: 15,
+                      right: 5,
+                      top: 10,
+                    ),
+                    visualDensity:
+                        const VisualDensity(horizontal: 0, vertical: -4),
+                    dense: true,
+                    trailing: IconButton(
+                      icon: const Icon(Icons.filter_list,
+                          color: Color(0xFF100887)),
+                      onPressed: () {},
+                    ),
+                    title: const Text(
+                      'Session',
+                      style: TextStyle(
+                          color: Color(0xFF100887),
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const Divider(
+                    color: Colors.lightBlueAccent,
+                    endIndent: 15,
+                    indent: 15,
+                  ),
+                  const SizedBox(height: 2),
+                  SizedBox(height: 250, child: displaySession()),
                 ],
               ),
             ),

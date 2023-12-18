@@ -16,6 +16,9 @@ class SearchPage extends StatefulWidget {
 class SearchPageState extends State<SearchPage> {
   @override
   void initState() {
+/*     if (searchresults.isEmpty) {
+      searchresults = cards;
+    } */
     super.initState();
   }
 
@@ -90,7 +93,11 @@ class SearchPageState extends State<SearchPage> {
               expiryDate: currentCard.ExpieryDate,
               cardHolderName: currentCard.FullName,
               cvvCode: currentCard.CVV,
-              showBackView: true, //true when you want to show cvv(back) view
+              obscureCardCvv: false,
+              obscureCardNumber: false,
+              showBackView: false, //true when you want to show cvv(back) view
+              width: 324,
+              height: 204,
               onCreditCardWidgetChange: (CreditCardBrand
                   brand) {}, // Callback for anytime credit card brand is changed
             ),

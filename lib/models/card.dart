@@ -49,6 +49,7 @@ class Card {
 }
 
 List<Card> cards = [];
+List<Card> session = [];
 List<Card> searchresults = [];
 
 Card currentCard = Card(
@@ -85,7 +86,7 @@ void save(BuildContext context) {
   currentCard.DateCaptured = inputFormat.format(DateTime.now()).toString();
 
   cards.add(currentCard);
-
+  session.add(currentCard);
   dialogbox(context, 'Card Saved',
       '${currentCard.FullName} ${currentCard.CardNumber}');
   backup();
