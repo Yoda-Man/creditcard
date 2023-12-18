@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Mobile/creditcard/linux"
+    "cmake.sourceDirectory": "C:/Mobile/creditcard/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
